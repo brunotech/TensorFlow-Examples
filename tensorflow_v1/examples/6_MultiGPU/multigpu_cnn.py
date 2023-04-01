@@ -73,7 +73,7 @@ def conv_net(x, n_classes, dropout, reuse, is_training):
         out = tf.layers.dense(x, n_classes)
         # Because 'softmax_cross_entropy_with_logits' loss already apply
         # softmax, we only apply softmax to testing network
-        out = tf.nn.softmax(out) if not is_training else out
+        out = out if is_training else tf.nn.softmax(out)
 
     return out
 
@@ -112,10 +112,7 @@ PS_OPS = ['Variable', 'VariableV2', 'AutoReloadVariable']
 def assign_to_device(device, ps_device='/cpu:0'):
     def _assign(op):
         node_def = op if isinstance(op, tf.NodeDef) else op.node_def
-        if node_def.op in PS_OPS:
-            return "/" + ps_device
-        else:
-            return device
+        return f"/{ps_device}" if node_def.op in PS_OPS else device
 
     return _assign
 
@@ -131,7 +128,7 @@ with tf.device('/cpu:0'):
 
     # Loop over all GPUs and construct their own computation graph
     for i in range(num_gpus):
-        with tf.device(assign_to_device('/gpu:{}'.format(i), ps_device='/cpu:0')):
+        with tf.device(assign_to_device(f'/gpu:{i}', ps_device='/cpu:0')):
 
             # Split data between GPUs
             _x = X[i * batch_size: (i+1) * batch_size]
@@ -186,9 +183,17 @@ with tf.device('/cpu:0'):
                 # Calculate batch loss and accuracy
                 loss, acc = sess.run([loss_op, accuracy], feed_dict={X: batch_x,
                                                                      Y: batch_y})
-                print("Step " + str(step) + ": Minibatch Loss= " + \
-                      "{:.4f}".format(loss) + ", Training Accuracy= " + \
-                      "{:.3f}".format(acc) + ", %i Examples/sec" % int(len(batch_x)/te))
+                print(
+                    (
+                        (
+                            f"Step {str(step)}: Minibatch Loss= "
+                            + "{:.4f}".format(loss)
+                        )
+                        + ", Training Accuracy= "
+                    )
+                    + "{:.3f}".format(acc)
+                    + ", %i Examples/sec" % int(len(batch_x) / te)
+                )
             step += 1
         print("Optimization Finished!")
 

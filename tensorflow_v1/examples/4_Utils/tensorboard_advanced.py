@@ -47,9 +47,7 @@ def multilayer_perceptron(x, weights, biases):
     layer_2 = tf.nn.relu(layer_2)
     # Create another summary to visualize the second layer ReLU activation
     tf.summary.histogram("relu2", layer_2)
-    # Output layer
-    out_layer = tf.add(tf.matmul(layer_2, weights['w3']), biases['b3'])
-    return out_layer
+    return tf.add(tf.matmul(layer_2, weights['w3']), biases['b3'])
 
 # Store layers weight & bias
 weights = {
@@ -99,7 +97,7 @@ for var in tf.trainable_variables():
     tf.summary.histogram(var.name, var)
 # Summarize all gradients
 for grad, var in grads:
-    tf.summary.histogram(var.name + '/gradient', grad)
+    tf.summary.histogram(f'{var.name}/gradient', grad)
 # Merge all summaries into a single op
 merged_summary_op = tf.summary.merge_all()
 

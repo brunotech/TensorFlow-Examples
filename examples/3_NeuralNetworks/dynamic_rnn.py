@@ -38,7 +38,7 @@ class ToySequenceData(object):
         self.data = []
         self.labels = []
         self.seqlen = []
-        for i in range(n_samples):
+        for _ in range(n_samples):
             # Random sequence length
             len = random.randint(min_seq_len, max_seq_len)
             # Monitor sequence length for TensorFlow dynamic calculation
@@ -50,15 +50,14 @@ class ToySequenceData(object):
                 s = [[float(i)/max_value] for i in
                      range(rand_start, rand_start + len)]
                 # Pad sequence for dimension consistency
-                s += [[0.] for i in range(max_seq_len - len)]
+                s += [[0.] for _ in range(max_seq_len - len)]
                 self.data.append(s)
                 self.labels.append([1., 0.])
             else:
                 # Generate a random sequence
-                s = [[float(random.randint(0, max_value))/max_value]
-                     for i in range(len)]
+                s = [[float(random.randint(0, max_value))/max_value] for _ in range(len)]
                 # Pad sequence for dimension consistency
-                s += [[0.] for i in range(max_seq_len - len)]
+                s += [[0.] for _ in range(max_seq_len - len)]
                 self.data.append(s)
                 self.labels.append([0., 1.])
         self.batch_id = 0
@@ -178,9 +177,16 @@ with tf.Session() as sess:
             # Calculate batch accuracy & loss
             acc, loss = sess.run([accuracy, cost], feed_dict={x: batch_x, y: batch_y,
                                                 seqlen: batch_seqlen})
-            print("Step " + str(step*batch_size) + ", Minibatch Loss= " + \
-                  "{:.6f}".format(loss) + ", Training Accuracy= " + \
-                  "{:.5f}".format(acc))
+            print(
+                (
+                    (
+                        f"Step {str(step * batch_size)}, Minibatch Loss= "
+                        + "{:.6f}".format(loss)
+                    )
+                    + ", Training Accuracy= "
+                )
+                + "{:.5f}".format(acc)
+            )
 
     print("Optimization Finished!")
 

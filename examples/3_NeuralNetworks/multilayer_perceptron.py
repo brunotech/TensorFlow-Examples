@@ -61,9 +61,7 @@ def multilayer_perceptron(x):
     layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
     # Hidden fully connected layer with 256 neurons
     layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
-    # Output fully connected layer with a neuron for each class
-    out_layer = tf.matmul(layer_2, weights['out']) + biases['out']
-    return out_layer
+    return tf.matmul(layer_2, weights['out']) + biases['out']
 
 # Construct model
 logits = multilayer_perceptron(X)
@@ -84,7 +82,7 @@ with tf.Session() as sess:
         avg_cost = 0.
         total_batch = int(mnist.train.num_examples/batch_size)
         # Loop over all batches
-        for i in range(total_batch):
+        for _ in range(total_batch):
             batch_x, batch_y = mnist.train.next_batch(batch_size)
             # Run optimization op (backprop) and cost op (to get loss value)
             _, c = sess.run([train_op, loss_op], feed_dict={X: batch_x,

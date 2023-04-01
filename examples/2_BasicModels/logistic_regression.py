@@ -7,6 +7,7 @@ Author: Aymeric Damien
 Project: https://github.com/aymericdamien/TensorFlow-Examples/
 '''
 
+
 from __future__ import print_function
 
 import tensorflow as tf
@@ -51,7 +52,7 @@ with tf.Session() as sess:
         avg_cost = 0.
         total_batch = int(mnist.train.num_examples/batch_size)
         # Loop over all batches
-        for i in range(total_batch):
+        for _ in range(total_batch):
             batch_xs, batch_ys = mnist.train.next_batch(batch_size)
             # Run optimization op (backprop) and cost op (to get loss value)
             _, c = sess.run([optimizer, cost], feed_dict={x: batch_xs,

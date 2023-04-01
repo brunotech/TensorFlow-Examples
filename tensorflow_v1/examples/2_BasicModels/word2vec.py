@@ -13,6 +13,7 @@ Links:
 Author: Aymeric Damien
 Project: https://github.com/aymericdamien/TensorFlow-Examples/
 """
+
 from __future__ import division, print_function, absolute_import
 
 import collections
@@ -67,12 +68,8 @@ for i in range(len(count) - 1, -1, -1):
         break
 # Compute the vocabulary size
 vocabulary_size = len(count)
-# Assign an id to each word
-word2id = dict()
-for i, (word, _)in enumerate(count):
-    word2id[word] = i
-
-data = list()
+word2id = {word: i for i, (word, _) in enumerate(count)}
+data = []
 unk_count = 0
 for word in text_words:
     # Retrieve a word id, or assign it index 0 ('UNK') if not in dictionary
@@ -110,7 +107,7 @@ def next_batch(batch_size, num_skips, skip_window):
             batch[i * num_skips + j] = buffer[skip_window]
             labels[i * num_skips + j, 0] = buffer[context_word]
         if data_index == len(data):
-            buffer.extend(data[0:span])
+            buffer.extend(data[:span])
             data_index = span
         else:
             buffer.append(data[data_index])
@@ -178,18 +175,17 @@ with tf.Session() as sess:
         if step % display_step == 0 or step == 1:
             if step > 1:
                 average_loss /= display_step
-            print("Step " + str(step) + ", Average Loss= " + \
-                  "{:.4f}".format(average_loss))
+            print((f"Step {str(step)}, Average Loss= " + "{:.4f}".format(average_loss)))
             average_loss = 0
 
         # Evaluation
         if step % eval_step == 0 or step == 1:
             print("Evaluation...")
             sim = sess.run(cosine_sim_op, feed_dict={X: x_test})
+            top_k = 8  # number of nearest neighbors
             for i in xrange(len(eval_words)):
-                top_k = 8  # number of nearest neighbors
                 nearest = (-sim[i, :]).argsort()[1:top_k + 1]
-                log_str = '"%s" nearest neighbors:' % eval_words[i]
+                log_str = f'"{eval_words[i]}" nearest neighbors:'
                 for k in xrange(top_k):
-                    log_str = '%s %s,' % (log_str, id2word[nearest[k]])
+                    log_str = f'{log_str} {id2word[nearest[k]]},'
                 print(log_str)

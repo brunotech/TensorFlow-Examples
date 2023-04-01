@@ -43,9 +43,7 @@ def neural_net(x_dict):
     layer_1 = tf.layers.dense(x, n_hidden_1)
     # Hidden fully connected layer with 256 neurons
     layer_2 = tf.layers.dense(layer_1, n_hidden_2)
-    # Output fully connected layer with a neuron for each class
-    out_layer = tf.layers.dense(layer_2, num_classes)
-    return out_layer
+    return tf.layers.dense(layer_2, num_classes)
 
 
 # Define the model function (following TF Estimator Template)
@@ -71,16 +69,13 @@ def model_fn(features, labels, mode):
     # Evaluate the accuracy of the model
     acc_op = tf.metrics.accuracy(labels=labels, predictions=pred_classes)
 
-    # TF Estimators requires to return a EstimatorSpec, that specify
-    # the different ops for training, evaluating, ...
-    estim_specs = tf.estimator.EstimatorSpec(
+    return tf.estimator.EstimatorSpec(
         mode=mode,
         predictions=pred_classes,
         loss=loss_op,
         train_op=train_op,
-        eval_metric_ops={'accuracy': acc_op})
-
-    return estim_specs
+        eval_metric_ops={'accuracy': acc_op},
+    )
 
 # Build the Estimator
 model = tf.estimator.Estimator(model_fn)

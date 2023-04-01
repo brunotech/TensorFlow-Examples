@@ -54,9 +54,7 @@ def neural_net(x):
     layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
     # Hidden fully connected layer with 256 neurons
     layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
-    # Output fully connected layer with a neuron for each class
-    out_layer = tf.matmul(layer_2, weights['out']) + biases['out']
-    return out_layer
+    return tf.matmul(layer_2, weights['out']) + biases['out']
 
 # Construct model
 logits = neural_net(X)
@@ -89,9 +87,16 @@ with tf.Session() as sess:
             # Calculate batch loss and accuracy
             loss, acc = sess.run([loss_op, accuracy], feed_dict={X: batch_x,
                                                                  Y: batch_y})
-            print("Step " + str(step) + ", Minibatch Loss= " + \
-                  "{:.4f}".format(loss) + ", Training Accuracy= " + \
-                  "{:.3f}".format(acc))
+            print(
+                (
+                    (
+                        f"Step {str(step)}, Minibatch Loss= "
+                        + "{:.4f}".format(loss)
+                    )
+                    + ", Training Accuracy= "
+                )
+                + "{:.3f}".format(acc)
+            )
 
     print("Optimization Finished!")
 

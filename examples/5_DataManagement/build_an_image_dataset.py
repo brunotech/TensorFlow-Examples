@@ -53,7 +53,7 @@ CHANNELS = 3 # The 3 color channels, change to 1 if grayscale
 # Reading the dataset
 # 2 modes: 'file' or 'folder'
 def read_images(dataset_path, mode, batch_size):
-    imagepaths, labels = list(), list()
+    imagepaths, labels = [], []
     if mode == 'file':
         # Read dataset file
         with open(dataset_path) as f:
@@ -155,7 +155,7 @@ def conv_net(x, n_classes, dropout, reuse, is_training):
         out = tf.layers.dense(fc1, n_classes)
         # Because 'softmax_cross_entropy_with_logits' already apply softmax,
         # we only apply softmax to testing network
-        out = tf.nn.softmax(out) if not is_training else out
+        out = out if is_training else tf.nn.softmax(out)
 
     return out
 
@@ -199,9 +199,16 @@ with tf.Session() as sess:
         if step % display_step == 0:
             # Run optimization and calculate batch loss and accuracy
             _, loss, acc = sess.run([train_op, loss_op, accuracy])
-            print("Step " + str(step) + ", Minibatch Loss= " + \
-                  "{:.4f}".format(loss) + ", Training Accuracy= " + \
-                  "{:.3f}".format(acc))
+            print(
+                (
+                    (
+                        f"Step {str(step)}, Minibatch Loss= "
+                        + "{:.4f}".format(loss)
+                    )
+                    + ", Training Accuracy= "
+                )
+                + "{:.3f}".format(acc)
+            )
         else:
             # Only run the optimization op (backprop)
             sess.run(train_op)

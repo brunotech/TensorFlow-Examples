@@ -83,7 +83,7 @@ def conv_net(x, n_classes, dropout, reuse, is_training):
         out = tf.layers.dense(fc1, n_classes)
         # Because 'softmax_cross_entropy_with_logits' already apply softmax,
         # we only apply softmax to testing network
-        out = tf.nn.softmax(out) if not is_training else out
+        out = out if is_training else tf.nn.softmax(out)
 
     return out
 
@@ -123,8 +123,12 @@ for step in range(1, num_steps + 1):
         # Calculate batch loss and accuracy
         # (note that this consume a new batch of data)
         loss, acc = sess.run([loss_op, accuracy])
-        print("Step " + str(step) + ", Minibatch Loss= " + \
-              "{:.4f}".format(loss) + ", Training Accuracy= " + \
-              "{:.3f}".format(acc))
+        print(
+            (
+                (f"Step {str(step)}, Minibatch Loss= " + "{:.4f}".format(loss))
+                + ", Training Accuracy= "
+            )
+            + "{:.3f}".format(acc)
+        )
 
 print("Optimization Finished!")

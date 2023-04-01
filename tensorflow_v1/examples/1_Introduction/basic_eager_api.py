@@ -16,6 +16,7 @@ can be converted to a graph that can be further optimized and/or extracted
 for deployment in production without changing code. " - Rajat Monga
 
 '''
+
 from __future__ import absolute_import, division, print_function
 
 import numpy as np
@@ -56,10 +57,10 @@ print("NumpyArray:\n b = %s" % b)
 print("Running operations, without tf.Session")
 
 c = a + b
-print("a + b = %s" % c)
+print(f"a + b = {c}")
 
 d = tf.matmul(a, b)
-print("a * b = %s" % d)
+print(f"a * b = {d}")
 
 print("Iterate through Tensor 'a':")
 for i in range(a.shape[0]):

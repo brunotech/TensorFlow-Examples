@@ -40,9 +40,7 @@ def multilayer_perceptron(x, weights, biases):
     # Hidden layer with RELU activation
     layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
     layer_2 = tf.nn.relu(layer_2)
-    # Output layer with linear activation
-    out_layer = tf.matmul(layer_2, weights['out']) + biases['out']
-    return out_layer
+    return tf.matmul(layer_2, weights['out']) + biases['out']
 
 # Store layers weight & bias
 weights = {
@@ -81,7 +79,7 @@ with tf.Session() as sess:
         avg_cost = 0.
         total_batch = int(mnist.train.num_examples/batch_size)
         # Loop over all batches
-        for i in range(total_batch):
+        for _ in range(total_batch):
             batch_x, batch_y = mnist.train.next_batch(batch_size)
             # Run optimization op (backprop) and cost op (to get loss value)
             _, c = sess.run([optimizer, cost], feed_dict={x: batch_x,
@@ -102,7 +100,7 @@ with tf.Session() as sess:
 
     # Save model weights to disk
     save_path = saver.save(sess, model_path)
-    print("Model saved in file: %s" % save_path)
+    print(f"Model saved in file: {save_path}")
 
 # Running a new session
 print("Starting 2nd session...")
@@ -112,14 +110,14 @@ with tf.Session() as sess:
 
     # Restore model weights from previously saved model
     saver.restore(sess, model_path)
-    print("Model restored from file: %s" % save_path)
+    print(f"Model restored from file: {save_path}")
 
     # Resume training
     for epoch in range(7):
         avg_cost = 0.
         total_batch = int(mnist.train.num_examples / batch_size)
         # Loop over all batches
-        for i in range(total_batch):
+        for _ in range(total_batch):
             batch_x, batch_y = mnist.train.next_batch(batch_size)
             # Run optimization op (backprop) and cost op (to get loss value)
             _, c = sess.run([optimizer, cost], feed_dict={x: batch_x,
